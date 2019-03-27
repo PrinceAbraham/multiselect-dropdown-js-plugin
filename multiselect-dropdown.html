@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Multi-select dropdown</title>
+  <style>
+    ul{
+      list-style: none;
+      padding:0px;
+      border: 1px solid;
+      width: 200px;
+      display: table;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <h1>Multi-select Dropdown POC</h1>
+  <div id="multiselect">
+    <button>Select</button>
+    <ul>
+      <li>Red</li>
+      <li>Blue</li>
+      <li>Green</li>
+      <li>Yellow</li>
+    </ul>
+  </div>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+  integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript">
+    var a = "";
+    var values = [];
+    function multiselect(elem){
+      a = this;
+      var id = '#'+this[0].id;
+      //hide menus
+      $(id+ '> ul').hide()
+      //Add click event to button
+      $(id + '> button').bind('click', function(){
+        if(!$(id+ ' ul').is(":visible")){
+          $(id+ '> ul').show()
+        }else{
+          $(id+ '> ul').hide()
+        }
+      });
+
+      //Create lists
+      var lis="";
+      for(var i=0; i < $(id + '> ul')[0].children.length; i++){
+        lis+="<li> <input type='checkbox' value="+i+" /> "+$(id + '> ul')[0].children[i].innerText+"</li>";
+      }
+
+      //replace old with newly created li's
+      $(id + '> ul').html(lis);
+
+      //bind a click function to all of it
+      $(id + '> ul > li > input').bind('click', function(){
+        var value = this.parentElement.innerText
+        if(values.includes(value)){
+          var n = values.indexOf(value)
+          values.splice(n, 1);
+        }else{
+          values.push(value);
+        }
+        $(id + "> button")[0].setAttribute('values', values);
+        if(values.length > 0){
+          $(id + "> button")[0].innerText = values;
+        }else{
+          $(id + "> button")[0].innerText = "Select";
+        }
+      });
+
+      //Click to close
+      $(document).click(function(event) {
+        $target = $(event.target);
+        if(!$target.closest(id+ ' button').length && !$target.closest(id+ ' > ul').length && $(id+ ' ul').is(":visible")){
+          $(id+ ' ul').hide();
+        }
+      });
+    }
+    $.fn.multiselect = multiselect;
+  </script>
+  <script>$("#multiselect").multiselect();</script>
+</html>
